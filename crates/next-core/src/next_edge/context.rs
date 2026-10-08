@@ -187,6 +187,7 @@ pub struct EdgeChunkingContextOptions {
     pub turbo_source_maps: Vc<SourceMapsType>,
     pub no_mangling: Vc<bool>,
     pub scope_hoisting: Vc<bool>,
+    pub minify_before_chunking: Vc<bool>,
     pub nested_async_chunking: Vc<bool>,
     pub client_root: FileSystemPath,
     pub client_static_folder_name: RcStr,
@@ -215,6 +216,7 @@ pub async fn get_edge_chunking_context_with_client_assets(
         turbo_source_maps,
         no_mangling,
         scope_hoisting,
+        minify_before_chunking,
         nested_async_chunking,
         client_root,
         client_static_folder_name,
@@ -287,7 +289,8 @@ pub async fn get_edge_chunking_context_with_client_assets(
                     ..Default::default()
                 },
             )
-            .module_merging(*scope_hoisting.await?);
+            .module_merging(*scope_hoisting.await?)
+            .minify_before_chunking(*minify_before_chunking.await?);
     }
 
     Ok(Vc::upcast(builder.build()))
@@ -311,6 +314,7 @@ pub async fn get_edge_chunking_context(
         turbo_source_maps,
         no_mangling,
         scope_hoisting,
+        minify_before_chunking,
         nested_async_chunking,
         client_root,
         client_static_folder_name,
@@ -400,7 +404,8 @@ pub async fn get_edge_chunking_context(
                     ..Default::default()
                 },
             )
-            .module_merging(*scope_hoisting.await?);
+            .module_merging(*scope_hoisting.await?)
+            .minify_before_chunking(*minify_before_chunking.await?);
     }
 
     Ok(Vc::upcast(builder.build()))
