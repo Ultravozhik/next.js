@@ -1,16 +1,16 @@
-error - [resolve] /turbopack/crates/turbopack-tests/tests/execution/turbopack/basic/new-url-ignore/input/index.js:27:9  Module not found: Can't resolve (<dynamic> | 'undefined')
+warning - [resolve] /turbopack/crates/turbopack-tests/tests/execution/turbopack/basic/new-url-ignore/input/index.js:28:9  Module not found: Can't resolve (<dynamic> | 'undefined')
   
-      23 | 
       24 | function partiallyDynamicUrl(options = {}) {
-      25 |   // Not ignored, so the `undefined` alternative fails to resolve and is
-      26 |   // reported with a hint suggesting `turbopackIgnore`.
+      25 |   // Not ignored, so the `undefined` alternative fails to resolve. Since the URL
+      26 |   // is partially dynamic, that's a warning (with a hint suggesting
+      27 |   // `turbopackIgnore`) rather than an error.
          +          v-----------------------------------v
-      27 +   return new URL(options.url, import.meta.url)
+      28 +   return new URL(options.url, import.meta.url)
          +          ^-----------------------------------^
-      28 | }
-      29 | 
-      30 | // Never called: these only check that the hint names the matching magic comment.
-      31 | export function partiallyDynamicImport(options = {}) {
+      29 | }
+      30 | 
+      31 | // Never called: these only check that the hint names the matching magic comment.
+      32 | export function partiallyDynamicImport(options = {}) {
   
   This request is too dynamic to resolve at build time. If it's only known at runtime, opt out of bundling with `new URL(/* turbopackIgnore: true */ url, import.meta.url)`.
   

@@ -2103,7 +2103,11 @@ where
                     }
                     let error_mode = if attributes.optional {
                         ResolveErrorMode::Ignore
-                    } else if in_try {
+                    } else if in_try || pat.has_dynamic_parts() {
+                        // A partially dynamic URL is often built from a runtime option next to a
+                        // static fallback, e.g. `new URL(options.workerUrl, import.meta.url)` is
+                        // `(<dynamic> | "undefined")`. The static alternatives that fail to resolve
+                        // may never be used, so keep the reference but don't fail the build.
                         ResolveErrorMode::Warn
                     } else {
                         ResolveErrorMode::Error

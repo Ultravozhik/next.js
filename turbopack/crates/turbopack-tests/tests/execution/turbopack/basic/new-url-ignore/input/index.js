@@ -22,8 +22,9 @@ function optionalPartiallyDynamicUrl(options = {}) {
 }
 
 function partiallyDynamicUrl(options = {}) {
-  // Not ignored, so the `undefined` alternative fails to resolve and is
-  // reported with a hint suggesting `turbopackIgnore`.
+  // Not ignored, so the `undefined` alternative fails to resolve. Since the URL
+  // is partially dynamic, that's a warning (with a hint suggesting
+  // `turbopackIgnore`) rather than an error.
   return new URL(options.url, import.meta.url)
 }
 
