@@ -15,7 +15,7 @@ use turbopack_core::{
         AsyncModuleInfo, ChunkItem, ChunkItemWithAsyncModuleInfo, ChunkType, ChunkingContext,
         ChunkingContextExt, ModuleId, SourceMapSourceType,
     },
-    code_builder::{CodeBuilder, PersistedCode},
+    code_builder::{CodeBuilder, CodeCells},
     ident::AssetIdent,
     issue::{IssueExt, IssueSeverity, StyledString, code_gen::CodeGenerationIssue},
     module::Module,
@@ -125,7 +125,7 @@ impl EcmascriptChunkItemContent {
 }
 
 impl EcmascriptChunkItemContent {
-    async fn module_factory(&self) -> Result<ResolvedVc<PersistedCode>> {
+    async fn module_factory(&self) -> Result<ResolvedVc<CodeCells>> {
         let mut code = CodeBuilder::default();
         for additional_id in self.additional_ids.iter() {
             writeln!(code, "{}, ", StringifyJs(&additional_id))?;
@@ -192,7 +192,7 @@ impl EcmascriptChunkItemContent {
 
         code += "})";
 
-        Ok(code.build().cell_persisted())
+        Ok(code.build().resolved_code_cells())
     }
 }
 
@@ -259,7 +259,7 @@ pub trait EcmascriptChunkItem: ChunkItem + OutputAssetsReference {
 
 #[turbo_tasks::value]
 pub struct EcmascriptChunkItemCode {
-    pub code: ResolvedVc<PersistedCode>,
+    pub code: ResolvedVc<CodeCells>,
     pub strict: bool,
 }
 
@@ -331,7 +331,7 @@ async fn module_factory_with_code_generation_issue(
             code += "(() => {{\n\n";
             writeln!(code, "throw new Error({error});", error = js_error_message)?;
             code += "\n}})";
-            code.build().cell_persisted()
+            code.build().resolved_code_cells()
         }
     };
     Ok(EcmascriptChunkItemCode { code, strict }.cell())
